@@ -22,7 +22,9 @@ public class StoryController {
     @PostMapping("/story/generate")
     public String generateStory(@ModelAttribute StoryRequest storyRequest, Model model) {
         try {
-            String story = storyService.askLLM(storyRequest.getStoryLength(),
+            String story = storyService.askLLM(
+                    storyRequest.getPlot(),
+                    storyRequest.getStoryLength(),
                     storyRequest.getGenre(),
                     storyRequest.getCharacterName(),
                     storyRequest.getCharacterDescription(),

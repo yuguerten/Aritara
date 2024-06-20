@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class StoryRequest {
-    private String prompt;
+    private String plot;
     private String storyLength;
     private String narrativePerspective;
     private String genre;

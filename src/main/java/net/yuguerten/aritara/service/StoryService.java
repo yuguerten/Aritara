@@ -17,20 +17,22 @@ public class StoryService {
 
     private final OpenAIConfig openAiChatClient;
 
-    public String askLLM(String storyLength, String genre, String mainCharacter, String characterDescription, String audience) {
+    public String askLLM(String plot, String storyLength, String genre, String mainCharacter, String characterDescription, String audience) {
 
         SystemPromptTemplate promptTemplate = new SystemPromptTemplate(
                 """
                         I need you to generate a story based on the following:
+                            plot: {plot}
                             Story Length: {storyLength}
                             Genre: {genre}
                             Main Character: {mainCharacter}
                             Character Description: {characterDescription}
                             Audience: {audience}
-                            The output should be a concise and coherent paragraph in the specified genre, featuring the described main character, and tailored for the given audience.
+                            The output should be a coherent story in the specified genre, featuring the described main character, and tailored for the given audience.
                         """
         );
         Prompt prompt = promptTemplate.create(Map.of(
+                "plot", plot,
                 "storyLength", storyLength,
                 "genre", genre,
                 "mainCharacter", mainCharacter,

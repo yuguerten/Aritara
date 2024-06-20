@@ -17,9 +17,9 @@ public class OpenAIConfig {
     public OpenAiChatClient getOpenAiChatClient() {
         OpenAiApi openAiApi = new OpenAiApi(apiKey);
         OpenAiChatOptions options = new OpenAiChatOptions.Builder()
-                .withModel("gpt-4o")
+                .withModel("gpt-4")
                 .withTemperature(0.9F)
-                .withMaxTokens(1000)
+                .withMaxTokens(3000)
                 .build();
         return new OpenAiChatClient(openAiApi, options);
     }
