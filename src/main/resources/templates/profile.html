@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Aritara - Create Your Story</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+</head>
+<style>
+    .form-control, .btn {
+        background-color: #333333;
+        color: #ffffff;
+    }
+    .form-control::placeholder {
+        color: #888888;
+    }
+    .btn-update {
+        background-color: #17a2b8;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 10px 2px;
+        cursor: pointer;
+        border-radius: 8px;
+        transition: background-color 0.3s, transform 0.3s;
+    }
+    .btn-update:hover {
+        background-color: #138496;
+        transform: scale(1.05);
+    }
+</style>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">ARITARA</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" href="index.html" th:href="@{/index}">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="profile.html" th:href="@{/profile}">Profile</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="savedStories.html" th:href="@{/savedStories}">Saved Stories</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="container">
+    <div class="profile-container">
+        <h1 class="text-center">Profile</h1>
+        <div class="user-info">
+            <p><strong>Full Name:</strong> ENSAM Casa</p>
+            <p><strong>Email:</strong> ensam@univh2c.ma</p>
+            <p><strong>Preferred Writing Style:</strong> Narrative</p>
+        </div>
+
+        <div class="text-center">
+            <button type="button" class="btn btn-update" data-toggle="modal" data-target="#updateProfileModal">
+                Update Profile
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="updateProfileModal" tabindex="-1" role="dialog" aria-labelledby="updateProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="background-color: #333333; color: #ffffff;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateProfileModalLabel">Update Profile</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" style="color: #ffffff;">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form th:action="" method="post">
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" class="form-control" id="fullName" name="fullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="writingStyle">Preferred Writing Style</label>
+                        <select class="form-control" id="writingStyle" name="writingStyle" required>
+                            <option value="">Select style</option>
+                            <option value="narrative">Narrative</option>
+                            <option value="descriptive">Descriptive</option>
+                            <option value="drama">Drama</option>
+                            <option value="creative">Creative</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
