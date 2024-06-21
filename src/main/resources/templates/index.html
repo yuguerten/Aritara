@@ -29,11 +29,11 @@
 </nav>
 
 <div class="container mt-5">
-    <h1>Create Your Story</h1>
+    <h1 class="text-center">AI Story Generator</h1>
     <form th:object="${storyRequest}" th:action="@{/story/generate}" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="plot">Plot</label>
-            <textarea class="form-control" id="plot" rows="3" th:field="*{plot}"></textarea>
+            <textarea class="form-control" id="plot" rows="5" th:field="*{plot}"></textarea>
         </div>
         <div class="form-group">
             <label for="file">Attach File (Optional)</label>
@@ -44,24 +44,32 @@
             <select class="form-control" id="storyLength" th:field="*{storyLength}">
                 <option value="short">Short</option>
                 <option value="medium">Medium</option>
-                <option value="long">Long</option>
             </select>
         </div>
         <div class="form-group">
             <label for="narrativePerspective">Narrative Perspective (Optional)</label>
             <select class="form-control" id="narrativePerspective" th:field="*{narrativePerspective}">
+                <option value="">-select-</option>
                 <option value="firstPerson">First Person</option>
-                <option value="secondPerson">Second Person</option>
                 <option value="thirdPerson">Third Person</option>
+                <option value="omniscient">Omniscient</option>
+                <option value="streamOfConsciousness">Stream of Consciousness</option>
+                <option value="epistolary">Epistolary</option>
+                <option value="multiplePerspectives">Multiple Perspectives</option>
+                <option value="interactive">Interactive</option>
+                <option value="observer">Observer</option>
+                <option value="cameraEye">Camera Eye</option>
             </select>
         </div>
         <div class="form-group">
             <label for="genre">Genre (Optional)</label>
             <select class="form-control" id="genre" th:field="*{genre}">
+                <option value="">-select-</option>
                 <option value="fantasy">Fantasy</option>
                 <option value="sciFi">Science Fiction</option>
                 <option value="mystery">Mystery</option>
                 <option value="romance">Romance</option>
+                <option value="nonFiction">Non-Fiction</option>
             </select>
         </div>
         <div class="form-group">
@@ -70,7 +78,11 @@
         </div>
         <div class="form-group">
             <label for="characterDescription">Character Description (Optional)</label>
-            <input type="text" class="form-control" id="characterDescription" th:field="*{characterDescription}" placeholder="Ex. Dr. Abdellah is short and smart">
+            <textarea class="form-control" id="characterDescription" rows="3" th:field="*{characterDescription}" placeholder="Ex. Dr. Abdellah is short and smart"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="settingDescription">Setting Description (Optional)</label>
+            <textarea class="form-control" id="settingDescription" rows="3" th:field="*{settingDescription}" placeholder="Ex. An old, small library with many windows"></textarea>
         </div>
         <div class="form-group">
             <label for="audience">Audience (Optional)</label>

@@ -14,5 +14,6 @@ public class StoryRequest {
     private String genre;
     private String characterName;
     private String characterDescription;
+    private String settingDescription;
     private String audience;
 }
