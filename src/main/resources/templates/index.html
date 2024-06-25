@@ -40,6 +40,10 @@
             <input type="file" class="form-control-file" id="file">
         </div>
         <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" class="form-control" id="title" th:field="*{title}" placeholder="Ex. Baba Ali">
+        </div>
+        <div class="form-group">
             <label for="storyLength">Story Length</label>
             <select class="form-control" id="storyLength" th:field="*{storyLength}">
                 <option value="short">Short</option>
@@ -70,6 +74,16 @@
                 <option value="mystery">Mystery</option>
                 <option value="romance">Romance</option>
                 <option value="nonFiction">Non-Fiction</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="writingStyle">Writing Style (Optional)</label>
+            <select class="form-control" id="writingStyle" th:field="*{writingStyle}">
+                <option value="">-select-</option>
+                <option value="narrative">Narrative</option>
+                <option value="descriptive">Descriptive</option>
+                <option value="drama">Drama</option>
+                <option value="creative">Creative</option>
             </select>
         </div>
         <div class="form-group">

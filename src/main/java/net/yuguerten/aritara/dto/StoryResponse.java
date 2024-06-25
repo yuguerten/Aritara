@@ -1,10 +1,13 @@
 package net.yuguerten.aritara.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@NoArgsConstructor @Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter @Setter
 public class StoryResponse {
-    private String story;
+    private String generatedStory;
 }

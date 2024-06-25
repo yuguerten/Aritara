@@ -81,9 +81,7 @@
     <h1 class="text-center">Generated Story</h1>
     <div class="form-group">
         <label for="generatedText">Generated Text</label>
-        <div id="generatedText" class="generated-text" contenteditable="false">
-            <!-- Generated text will appear here -->
-        </div>
+        <div class="alert alert-primary" id="generatedText" role="alert" th:text="${story}"></div>
     </div>
     <div class="control-icons">
         <img src="sound_icon.png" alt="Sound" title="Sound" class="sound-icon">
@@ -94,7 +92,7 @@
         <textarea id="feedback" rows="3" class="form-control feedback-text"></textarea>
     </div>
     <div class="text-center">
-        <button th:href="/" class="btn btn-regenerate">Regenerate</button>
+        <button class="btn btn-regenerate">Regenerate</button>
     </div>
 </div>
 
