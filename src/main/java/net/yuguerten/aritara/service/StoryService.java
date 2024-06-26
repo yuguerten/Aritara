@@ -2,6 +2,7 @@ package net.yuguerten.aritara.service;
 
 
 import net.yuguerten.aritara.config.OpenAIConfig;
+import net.yuguerten.aritara.dto.StoryResponseDTO;
 import net.yuguerten.aritara.model.Story;
 import net.yuguerten.aritara.repository.StoryRepository;
 import org.springframework.ai.chat.ChatResponse;
@@ -22,17 +23,16 @@ public class StoryService {
 
     private final OpenAIConfig openAiChatClient;
 
-    public String generateStory(String plot, String title, String storyLength, String genre, String writingStyle, String mainCharacter, String characterDescription, String settingDescription, String audience) {
+    public StoryResponseDTO generateStory(String plot, String title, String storyLength, String genre, String writingStyle, String mainCharacter, String characterDescription, String settingDescription, String audience) {
 
         SystemPromptTemplate promptTemplate = new SystemPromptTemplate(
                 """
                     Title: "{title}"
-                    Summary: Write a story about: {plot}
+                    Summary: Write a {storyLength}-length story about: {plot}
                     Main Character Name: {mainCharacter}
                     Main Character Description: {characterDescription}
                     Setting Description: {settingDescription}
                     Tone/Style: {writingStyle}
-                    Story Length: {storyLength}
                     Genre: {genre}
                     Audience: {audience}
                 """
@@ -49,7 +49,7 @@ public class StoryService {
                 "audience", audience
         ));
         ChatResponse response = openAiChatClient.getOpenAiChatClient().call(prompt);
-        return response.getResult().getOutput().getContent();
+        return new StoryResponseDTO(response.getResult().getOutput().getContent());
     }
 
     public List<Story> getAllStories() {

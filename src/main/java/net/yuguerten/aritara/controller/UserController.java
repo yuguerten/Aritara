@@ -1,5 +1,7 @@
 package net.yuguerten.aritara.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import net.yuguerten.aritara.dto.LoginDTO;
 import net.yuguerten.aritara.dto.UserDTO;
@@ -23,12 +25,12 @@ public class UserController {
         return "sign-up";
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/sign-up")
     public String registerUser(@ModelAttribute UserDTO userDTO, Model model) {
         try {
             User user = userService.registerNewUser(userDTO);
             model.addAttribute("user", user);
-            return "redirect:/login";
+            return "redirect:/user/login";
         } catch (RuntimeException e) {
             model.addAttribute("error", e.getMessage());
             return "sign-up";
@@ -51,5 +53,15 @@ public class UserController {
             model.addAttribute("error", "Invalid email or password");
             return "login";
         }
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response, Model model) {
+        HttpSession session = request.getSession(false);
+        model.addAttribute("loginDTO", new LoginDTO());
+        if (session != null) {
+            session.invalidate();
+        }
+        return "login";
     }
 }
