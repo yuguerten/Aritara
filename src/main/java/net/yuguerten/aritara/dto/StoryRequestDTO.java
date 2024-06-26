@@ -9,7 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class StoryRequest {
+public class StoryRequestDTO {
     private String plot;
     private String title;
     private String storyLength;
