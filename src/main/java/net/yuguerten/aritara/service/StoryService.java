@@ -23,18 +23,33 @@ public class StoryService {
 
     private final OpenAIConfig openAiChatClient;
 
-    public StoryResponseDTO generateStory(String plot, String title, String storyLength, String genre, String writingStyle, String mainCharacter, String characterDescription, String settingDescription, String audience) {
+    public String generateStory(String plot, String title, String storyLength, String genre, String writingStyle, String mainCharacter, String characterDescription, String settingDescription, String audience) {
 
         SystemPromptTemplate promptTemplate = new SystemPromptTemplate(
                 """
-                    Title: "{title}"
-                    Summary: Write a {storyLength}-length story about: {plot}
+                    You are a very good and experienced story teller.
+                    --------------------
+                    Write a {storyLength}-length story titled: {title}.
+                    The story has to respect and contain the following preferences in a coherent way:
+                    Plot details: {plot}
                     Main Character Name: {mainCharacter}
                     Main Character Description: {characterDescription}
                     Setting Description: {settingDescription}
                     Tone/Style: {writingStyle}
                     Genre: {genre}
                     Audience: {audience}
+                    ---------------------
+                    The output should be something like:
+                    Tile: "-the title-"
+                    then show the story in a new line.
+                    ---------------------
+                    If the preferences mentioned above are not specified, choose your own but don't mention them when outputting the story.
+                    The output should not be something like:
+                    "Main Character Name: Lucas Main Character Description: Lucas is a blind musician in his mid-thirties with an unruly mane of jet-black hair and a soulful heart. Despite his disability, his spirit radiates positivity and warmth. Setting Description: The story is set in a bustling city that never sleeps. Lucas is often found playing his soulful tunes in the heart of the city, amidst the chaos and noise. Tone/Style: Inspirational and Heartwarming Genre: Drama Audience: Young adults and adults ... etc"
+                    It should be something like:
+                    "Title: "-title-"
+                             \s
+                              Joe, a 22-year-old data science student from a modest European background, possessed a burning ambition to get rich; not for the sake of vanity or mere materialistic desires but to bring about a significant change in the life of his ailing mother whose dreams had been repeatedly crushed under the weight of economic hardships... etc"
                 """
         );
         Prompt prompt = promptTemplate.create(Map.of(
@@ -49,7 +64,7 @@ public class StoryService {
                 "audience", audience
         ));
         ChatResponse response = openAiChatClient.getOpenAiChatClient().call(prompt);
-        return new StoryResponseDTO(response.getResult().getOutput().getContent());
+        return new StoryResponseDTO(response.getResult().getOutput().getContent()).getGeneratedStory();
     }
 
     public List<Story> getAllStories() {
@@ -66,5 +81,9 @@ public class StoryService {
 
     public void deleteStory(Long id) {
         storyRepository.deleteById(id);
+    }
+
+    public void saveStory(Story story) {
+        storyRepository.save(story);
     }
 }

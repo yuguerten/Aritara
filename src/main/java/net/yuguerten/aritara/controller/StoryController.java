@@ -1,12 +1,17 @@
 package net.yuguerten.aritara.controller;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import net.yuguerten.aritara.dto.StoryRequestDTO;
 import net.yuguerten.aritara.dto.StoryResponseDTO;
+import net.yuguerten.aritara.model.Story;
+import net.yuguerten.aritara.model.User;
 import net.yuguerten.aritara.service.StoryService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @Controller
 @RequiredArgsConstructor
@@ -23,7 +28,7 @@ public class StoryController {
     @PostMapping("/story/generate")
     public String generateStory(@ModelAttribute StoryRequestDTO storyRequestDTO, Model model) {
         try {
-            StoryResponseDTO story = storyService.generateStory(
+            String story = storyService.generateStory(
                     storyRequestDTO.getPlot(),
                     storyRequestDTO.getTitle(),
                     storyRequestDTO.getStoryLength(),
@@ -39,5 +44,24 @@ public class StoryController {
             model.addAttribute("error", "An error occurred while generating the story: " + e.getMessage());
             return "error";
         }
+    }
+
+    @PostMapping("/story/save")
+    public String saveStory(@RequestParam("content") String content, HttpSession session, Model model) {
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        if (loggedInUser == null) {
+            return "redirect:/login";
+        }
+
+        Story story = new Story();
+        story.setUser(loggedInUser);
+        story.setContent(content);
+        story.setCreatedAt(LocalDateTime.now());
+
+        storyService.saveStory(story);
+
+        model.addAttribute("message", "Story saved successfully!");
+        model.addAttribute("story", story.getContent());
+        return "storyResult";
     }
 }

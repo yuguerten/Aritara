@@ -60,6 +60,7 @@
 <div class="container mt-5">
   <div class="login-container">
     <h2 class="text-center">ARITARA</h2>
+    <div th:if="${error}" class="alert alert-success" role="alert" th:text="${error}"></div>
     <form th:action="@{/user/login}" th:object="${loginDTO}" method="post">
       <div class="form-group">
         <label for="email">Email</label>

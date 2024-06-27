@@ -60,6 +60,7 @@
 <div class="container mt-5">
     <div class="signup-container">
         <h2 class="text-center">ARITARA</h2>
+        <div th:if="${error}" class="alert alert-success" role="alert" th:text="${error}"></div>
         <form th:action="@{/user/sign-up}" th:object="${userDTO}" method="post">
             <div class="form-group">
                 <label for="username">Username</label>
