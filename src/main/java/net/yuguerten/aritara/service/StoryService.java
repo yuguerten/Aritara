@@ -4,6 +4,7 @@ package net.yuguerten.aritara.service;
 import net.yuguerten.aritara.config.OpenAIConfig;
 import net.yuguerten.aritara.dto.StoryResponseDTO;
 import net.yuguerten.aritara.model.Story;
+import net.yuguerten.aritara.model.User;
 import net.yuguerten.aritara.repository.StoryRepository;
 import org.springframework.ai.chat.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -79,8 +80,14 @@ public class StoryService {
         return storyRepository.findById(id).orElse(null);
     }
 
-    public void deleteStory(Long id) {
-        storyRepository.deleteById(id);
+    public List<Story> findStoriesByUser(User user) {
+        return storyRepository.findByUser(user);
+    }
+
+    public void deleteStory(Long id, User user) {
+        Story story = storyRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new RuntimeException("Story not found or you are not authorized to delete it"));
+        storyRepository.delete(story);
     }
 
     public void saveStory(Story story) {

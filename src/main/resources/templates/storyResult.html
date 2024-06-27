@@ -80,7 +80,7 @@
         <div class="alert alert-primary" id="generatedText" role="alert" th:text="${story}"></div>
     </div>
     <div class="control-icons">
-        <img src="/sound_icon.png" alt="Sound" title="Sound" class="sound-icon">
+        <img src="/sound_icon.png" alt="Sound" title="Sound" class="sound-icon" th:data-story="${story}">
         <form th:action="@{/story/save}" method="post">
             <input type="hidden" name="content" th:value="${story}">
             <button type="submit" class="save-icon btn btn-link"><img src="/save_icon.png" alt="Save" title="Save"></button>
@@ -104,5 +104,31 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
         integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
         crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function() {
+        let isPlaying = false;
+        let utterance = null;
+
+        // Function to play or stop speech
+        function toggleSpeech(story) {
+            if (isPlaying) {
+                // Stop speech
+                window.speechSynthesis.cancel();
+                isPlaying = false;
+            } else {
+                // Play speech
+                utterance = new SpeechSynthesisUtterance(story);
+                speechSynthesis.speak(utterance);
+                isPlaying = true;
+            }
+        }
+
+        // Text-to-Speech functionality
+        $('.sound-icon').click(function() {
+            const story = $(this).data('story');
+            toggleSpeech(story);
+        });
+    });
+</script>
 </body>
 </html>

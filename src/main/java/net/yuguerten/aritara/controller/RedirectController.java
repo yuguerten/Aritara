@@ -37,8 +37,8 @@ public class RedirectController {
 //        return "profile";
 //    }
 
-    @GetMapping("/savedStories")
-    public String savedStories() {
-        return "savedStories";
-    }
+//    @GetMapping("/savedStories")
+//    public String savedStories() {
+//        return "savedStories";
+//    }
 }

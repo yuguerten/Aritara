@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Saved Stories</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .story-card {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ced4da;
+            border-radius: 10px;
+            background-color: #ffffff;
+        }
+        .story-card h5 {
+            margin-bottom: 15px;
+        }
+        .story-card p {
+            margin-bottom: 10px;
+        }
+        .control-icons {
+            display: flex;
+            justify-content: flex-end;
+        }
+        .control-icons img {
+            margin-left: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#" th:href="@{/home}">ARITARA</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/home}">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/user/profile}">Profile</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/savedStories}">Saved Stories</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/user/logout}">Logout</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="container mt-5">
+    <h1 class="text-center">Saved Stories</h1>
+    <div th:if="${stories.isEmpty()}" class="alert alert-info text-center">You have no saved stories.</div>
+    <div th:each="story : ${stories}" class="story-card">
+        <p th:text="${story.content}"></p>
+        <div class="control-icons">
+            <img src="/sound_icon.png" alt="Sound" title="Hear Story" class="sound-icon" th:data-story="${story.content}">
+            <img src="/delete_icon.png" alt="Delete" title="Delete Story" class="delete-icon" th:data-story-id="${story.id}">
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function() {
+        let isPlaying = false;
+        let utterance = null;
+
+        // Function to play or stop speech
+        function toggleSpeech(story) {
+            if (isPlaying) {
+                // Stop speech
+                window.speechSynthesis.cancel();
+                isPlaying = false;
+            } else {
+                // Play speech
+                utterance = new SpeechSynthesisUtterance(story);
+                speechSynthesis.speak(utterance);
+                isPlaying = true;
+            }
+        }
+
+        // Text-to-Speech functionality
+        $('.sound-icon').click(function() {
+            const story = $(this).data('story');
+            toggleSpeech(story);
+        });
+
+        // Delete story functionality
+        $('.delete-icon').click(function() {
+            const storyId = $(this).data('story-id');
+            if (confirm('Are you sure you want to delete this story?')) {
+                $.post('/story/delete', {id: storyId}, function(response) {
+                    if (response.success) {
+                        location.reload();
+                    } else {
+                        alert('Error deleting story: ' + response.message);
+                    }
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>
