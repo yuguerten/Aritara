@@ -13,6 +13,7 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
     List<Story> findByUserId(Long userId);
     Optional<Story> findById(Long id);
     void deleteById(Long id);
-    List<Story> findByUser(User user);
+//    List<Story> findByUser(User user);
     Optional<Story> findByIdAndUser(Long id, User user);
+    List<Story> findByUserOrderByCreatedAtDesc(User user);
 }

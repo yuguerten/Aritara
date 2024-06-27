@@ -2,8 +2,8 @@ package net.yuguerten.aritara.controller;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import net.yuguerten.aritara.dto.RegenerateDTO;
 import net.yuguerten.aritara.dto.StoryRequestDTO;
-import net.yuguerten.aritara.dto.StoryResponseDTO;
 import net.yuguerten.aritara.model.Story;
 import net.yuguerten.aritara.model.User;
 import net.yuguerten.aritara.service.StoryService;
@@ -62,16 +62,14 @@ public class StoryController {
         return "storyResult";
     }
 
-    // Display saved stories
     @GetMapping("/savedStories")
     public String showSavedStories(HttpSession session, Model model) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
-        List<Story> stories = storyService.findStoriesByUser(loggedInUser);
+        List<Story> stories = storyService.findStoriesByUserDesc(loggedInUser);
         model.addAttribute("stories", stories);
         return "savedStories";
     }
 
-    // Delete a story
     @PostMapping("/story/delete")
     @ResponseBody
     public Map<String, Object> deleteStory(@RequestParam Long id, HttpSession session) {
@@ -85,5 +83,21 @@ public class StoryController {
             response.put("message", e.getMessage());
         }
         return response;
+    }
+
+    @PostMapping("/story/regenerate")
+    public String regenerateStory(@ModelAttribute RegenerateDTO regenerateDTO, Model model) {
+        try {
+            String story = storyService.regenerateStory(
+                    regenerateDTO.getOriginalStory(),
+                    regenerateDTO.getFeedback()
+            );
+            model.addAttribute("story", story);
+            model.addAttribute("message", "Story regenerated successfully based on your feedback!");
+            return "storyResult";
+        } catch (Exception e) {
+            model.addAttribute("error", "An error occurred while regenerating the story: " + e.getMessage());
+            return "error";
+        }
     }
 }

@@ -68,20 +68,32 @@ public class StoryService {
         return new StoryResponseDTO(response.getResult().getOutput().getContent()).getGeneratedStory();
     }
 
-    public List<Story> getAllStories() {
-        return storyRepository.findAll();
+    public String regenerateStory(String originalStory, String feedback) {
+
+        SystemPromptTemplate promptTemplate = new SystemPromptTemplate(
+                """
+                    You are a very good and experienced story teller.
+                    --------------------
+                    Below is the original story:
+                    "{originalStory}"
+                    Here is the feedback: "{feedback}"
+                    Please regenerate the story based on the feedback.
+                    """
+        );
+        Prompt prompt = promptTemplate.create(Map.of(
+                "originalStory", originalStory,
+                "feedback", feedback
+        ));
+        ChatResponse response = openAiChatClient.getOpenAiChatClient().call(prompt);
+        return new StoryResponseDTO(response.getResult().getOutput().getContent()).getGeneratedStory();
     }
 
-    public List<Story> getStoriesByUserId(Long userId) {
-        return storyRepository.findByUserId(userId);
-    }
+//    public List<Story> findStoriesByUser(User user) {
+//        return storyRepository.findByUser(user);
+//    }
 
-    public Story getStoryById(Long id) {
-        return storyRepository.findById(id).orElse(null);
-    }
-
-    public List<Story> findStoriesByUser(User user) {
-        return storyRepository.findByUser(user);
+    public List<Story> findStoriesByUserDesc(User user) {
+        return storyRepository.findByUserOrderByCreatedAtDesc(user);
     }
 
     public void deleteStory(Long id, User user) {

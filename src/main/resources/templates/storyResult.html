@@ -91,7 +91,11 @@
         <textarea id="feedback" rows="3" class="form-control feedback-text"></textarea>
     </div>
     <div class="text-center">
-        <button class="btn btn-regenerate">Regenerate</button>
+        <form th:action="@{/story/regenerate}" method="post">
+            <input type="hidden" name="originalStory" th:value="${story}">
+            <input type="hidden" name="feedback" id="feedbackInput">
+            <button type="submit" class="btn btn-regenerate" onclick="submitFeedback()">Regenerate</button>
+        </form>
     </div>
 </div>
 
@@ -129,6 +133,10 @@
             toggleSpeech(story);
         });
     });
+    // Regenerate story
+    function submitFeedback() {
+        document.getElementById('feedbackInput').value = document.getElementById('feedback').value;
+    }
 </script>
 </body>
 </html>

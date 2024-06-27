@@ -20,4 +20,5 @@ public class StoryRequestDTO {
     private String characterDescription;
     private String settingDescription;
     private String audience;
+    private String feedback;
 }
