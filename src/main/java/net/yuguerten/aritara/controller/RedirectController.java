@@ -32,10 +32,10 @@ public class RedirectController {
         return "home";
     }
 
-    @GetMapping("/profile")
-    public String profile() {
-        return "profile";
-    }
+//    @GetMapping("/profile")
+//    public String profile() {
+//        return "profile";
+//    }
 
     @GetMapping("/savedStories")
     public String savedStories() {

@@ -55,6 +55,42 @@ public class UserController {
         }
     }
 
+    @GetMapping("/profile")
+    public String showProfile(HttpSession session, Model model) {
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        if (loggedInUser != null) {
+            model.addAttribute("user", loggedInUser);
+            return "profile";
+        } else {
+            return "redirect:/login";
+        }
+    }
+
+    @PostMapping("/profile/update")
+    public String updateProfile(@ModelAttribute User user, HttpSession session, Model model, @RequestParam String password, @RequestParam String confirmPassword) {
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+
+        if (!password.equals(confirmPassword)) {
+            model.addAttribute("error", "Passwords do not match");
+            model.addAttribute("user", loggedInUser);
+            return "profile";
+        }
+
+        // Update user details
+        loggedInUser.setUsername(user.getUsername());
+        loggedInUser.setEmail(user.getEmail());
+        if (!password.isEmpty()) {
+            loggedInUser.setPassword(password);
+        }
+
+        userService.updateUser(loggedInUser);
+        session.setAttribute("loggedInUser", loggedInUser); // Update session with new user details
+
+        model.addAttribute("success", "Profile updated successfully");
+        model.addAttribute("user", loggedInUser);
+        return "profile";
+    }
+
     @GetMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response, Model model) {
         HttpSession session = request.getSession(false);

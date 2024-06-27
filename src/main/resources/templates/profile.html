@@ -46,7 +46,7 @@
                 <a class="nav-link" th:href="@{/home}">Home</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/profile}">Profile</a>
+                <a class="nav-link" th:href="@{/user/profile}">Profile</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/savedStories}">Saved Stories</a>
@@ -57,12 +57,12 @@
 <div class="container">
     <div class="profile-container">
         <h1 class="text-center">Profile</h1>
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
         <div class="user-info">
-            <p><strong>Full Name:</strong> ENSAM Casa</p>
-            <p><strong>Email:</strong> ensam@univh2c.ma</p>
-            <p><strong>Preferred Writing Style:</strong> Narrative</p>
+            <p><strong>Username:</strong> <span th:text="${user.username}"></span></p>
+            <p><strong>Email Address:</strong> <span th:text="${user.email}"></span></p>
         </div>
-
         <div class="text-center">
             <button type="button" class="btn btn-update" data-toggle="modal" data-target="#updateProfileModal">
                 Update Profile
@@ -81,21 +81,22 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="post">
-<!--                    th:action=""-->
+                <form th:action="@{/user/profile/update}" method="post" th:object="${user}">
                     <div class="form-group">
-                        <label for="fullName">Full Name</label>
-                        <input type="text" class="form-control" id="fullName" name="fullName" required>
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username" th:field="*{username}" required>
                     </div>
                     <div class="form-group">
-                        <label for="writingStyle">Preferred Writing Style</label>
-                        <select class="form-control" id="writingStyle" name="writingStyle" required>
-                            <option value="">Select style</option>
-                            <option value="narrative">Narrative</option>
-                            <option value="descriptive">Descriptive</option>
-                            <option value="drama">Drama</option>
-                            <option value="creative">Creative</option>
-                        </select>
+                        <label for="email">Email Address</label>
+                        <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">New Password</label>
+                        <input type="password" class="form-control" id="password" name="password">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword">
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">Save</button>
                 </form>
@@ -103,6 +104,7 @@
         </div>
     </div>
 </div>
+
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
