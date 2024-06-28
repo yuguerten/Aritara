@@ -5,52 +5,55 @@
     <title>Generated Story</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
           integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <style>
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+        .feedback-text {
+            height: 100px;
+            overflow-y: scroll;
+        }
+        .control-icons {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+        .control-icons img {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        .sound-icon {
+            width: 40px;
+            height: 40px;
+        }
+        .save-icon {
+            width: 40px;
+            height: 40px;
+        }
+        .btn-regenerate {
+            background-color: #28a745;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 2px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .btn-regenerate:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+        .highlight {
+            background-color: yellow;
+        }
+    </style>
 </head>
-<style>
-    h1 {
-        margin-bottom: 20px;
-        font-size: 2.5em;
-    }
-    .feedback-text {
-        height: 100px;
-        overflow-y: scroll;
-    }
-    .control-icons {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-    }
-    .control-icons img {
-        margin-right: 10px;
-        cursor: pointer;
-    }
-    .sound-icon {
-        width: 40px;
-        height: 40px;
-    }
-    .save-icon {
-        width: 40px;
-        height: 40px;
-    }
-    .btn-regenerate {
-        background-color: #28a745;
-        border: none;
-        color: white;
-        padding: 10px 20px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        margin: 10px 2px;
-        cursor: pointer;
-        border-radius: 8px;
-        transition: background-color 0.3s, transform 0.3s;
-    }
-    .btn-regenerate:hover {
-        background-color: #218838;
-        transform: scale(1.05);
-    }
-</style>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="#" th:href="@{/home}">ARITARA</a>
@@ -77,7 +80,7 @@
     <h1 class="text-center">Generated Story</h1>
     <div th:if="${message}" class="alert alert-success" role="alert" th:text="${message}"></div>
     <div class="form-group">
-        <div class="alert alert-primary" id="generatedText" role="alert" th:text="${story}"></div>
+        <div class="alert alert-primary" id="generatedText" role="alert"></div>
     </div>
     <div class="control-icons">
         <img src="/sound_icon.png" alt="Sound" title="Sound" class="sound-icon" th:data-story="${story}">
@@ -108,31 +111,58 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
         integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
         crossorigin="anonymous"></script>
-<script>
+<script th:inline="javascript">
     $(document).ready(function() {
         let isPlaying = false;
         let utterance = null;
+        const story = /*[[${story}]]*/ 'Default story text';
+        const words = story.split(/\s+/);
+        let currentWordIndex = 0;
+
+        // Function to highlight the current word
+        function highlightWord(index) {
+            const generatedText = document.getElementById('generatedText');
+            generatedText.innerHTML = words.map((word, i) =>
+                `<span class="${i === index ? 'highlight' : ''}">${word}</span>`
+            ).join(' ');
+        }
+
+        // Initialize the text with no highlighting
+        highlightWord(-1);
 
         // Function to play or stop speech
-        function toggleSpeech(story) {
+        function toggleSpeech() {
             if (isPlaying) {
                 // Stop speech
                 window.speechSynthesis.cancel();
                 isPlaying = false;
+                highlightWord(-1);  // Remove all highlighting
             } else {
                 // Play speech
                 utterance = new SpeechSynthesisUtterance(story);
+                currentWordIndex = 0;
+
+                utterance.onboundary = function(event) {
+                    if (event.name === 'word') {
+                        highlightWord(currentWordIndex);
+                        currentWordIndex++;
+                    }
+                };
+
+                utterance.onend = function() {
+                    isPlaying = false;
+                    highlightWord(-1);  // Remove all highlighting when done
+                };
+
                 speechSynthesis.speak(utterance);
                 isPlaying = true;
             }
         }
 
         // Text-to-Speech functionality
-        $('.sound-icon').click(function() {
-            const story = $(this).data('story');
-            toggleSpeech(story);
-        });
+        $('.sound-icon').click(toggleSpeech);
     });
+
     // Regenerate story
     function submitFeedback() {
         document.getElementById('feedbackInput').value = document.getElementById('feedback').value;

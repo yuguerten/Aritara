@@ -26,6 +26,9 @@
             margin-left: 10px;
             cursor: pointer;
         }
+        .highlight {
+            background-color: yellow;
+        }
     </style>
 </head>
 <body>
@@ -58,9 +61,9 @@
     <h1 class="text-center">Saved Stories</h1>
     <div th:if="${stories.isEmpty()}" class="alert alert-info text-center">You have no saved stories.</div>
     <div th:each="story : ${stories}" class="story-card">
-        <p th:text="${story.content}"></p>
+        <p th:text="${story.content}" th:id="'story-' + ${story.id}"></p>
         <div class="control-icons">
-            <img src="/sound_icon.png" alt="Sound" title="Hear Story" class="sound-icon" th:data-story="${story.content}">
+            <img src="/sound_icon.png" alt="Sound" title="Hear Story" class="sound-icon" th:data-story-id="${story.id}">
             <img src="/delete_icon.png" alt="Delete" title="Delete Story" class="delete-icon" th:data-story-id="${story.id}">
         </div>
     </div>
@@ -72,16 +75,48 @@
     $(document).ready(function() {
         let isPlaying = false;
         let utterance = null;
+        let currentStoryId = null;
+        let words = [];
+        let currentWordIndex = 0;
+
+        // Function to highlight the current word
+        function highlightWord(storyId, index) {
+            const storyElement = document.getElementById('story-' + storyId);
+            storyElement.innerHTML = words.map((word, i) =>
+                `<span class="${i === index ? 'highlight' : ''}">${word}</span>`
+            ).join(' ');
+        }
 
         // Function to play or stop speech
-        function toggleSpeech(story) {
+        function toggleSpeech(storyId) {
+            const storyElement = document.getElementById('story-' + storyId);
+            const story = storyElement.textContent;
+
             if (isPlaying) {
                 // Stop speech
                 window.speechSynthesis.cancel();
                 isPlaying = false;
+                highlightWord(currentStoryId, -1);  // Remove all highlighting
             } else {
                 // Play speech
+                words = story.split(/\s+/);
+                currentWordIndex = 0;
+                currentStoryId = storyId;
+
                 utterance = new SpeechSynthesisUtterance(story);
+
+                utterance.onboundary = function(event) {
+                    if (event.name === 'word') {
+                        highlightWord(currentStoryId, currentWordIndex);
+                        currentWordIndex++;
+                    }
+                };
+
+                utterance.onend = function() {
+                    isPlaying = false;
+                    highlightWord(currentStoryId, -1);  // Remove all highlighting when done
+                };
+
                 speechSynthesis.speak(utterance);
                 isPlaying = true;
             }
@@ -89,8 +124,8 @@
 
         // Text-to-Speech functionality
         $('.sound-icon').click(function() {
-            const story = $(this).data('story');
-            toggleSpeech(story);
+            const storyId = $(this).data('story-id');
+            toggleSpeech(storyId);
         });
 
         // Delete story functionality
