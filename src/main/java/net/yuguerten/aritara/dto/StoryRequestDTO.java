@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,4 +22,5 @@ public class StoryRequestDTO {
     private String settingDescription;
     private String audience;
     private String feedback;
+    private MultipartFile file;
 }

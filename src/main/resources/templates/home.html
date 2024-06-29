@@ -36,14 +36,15 @@
 
 <div class="container mt-5">
     <h1 class="text-center">AI Story Generator</h1>
-    <form th:object="${storyRequestDTO}" th:action="@{/story/generate}" method="post" enctype="multipart/form-data">
+    <form id="storyForm" th:object="${storyRequestDTO}" th:action="@{/story/generate}" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="plot">Plot</label>
             <textarea class="form-control" id="plot" rows="5" th:field="*{plot}"></textarea>
         </div>
         <div class="form-group">
             <label for="file">Attach File (Optional)</label>
-            <input type="file" class="form-control-file" id="file">
+            <input type="file" class="form-control-file" id="file" name="file">
+            <small id="fileHelp" class="form-text text-muted">Maximum file size: 1MB.</small>
         </div>
         <div class="form-group">
             <label for="title">Title</label>
@@ -115,5 +116,15 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+<script>
+        document.getElementById('storyForm').addEventListener('submit', function(event) {
+        const fileInput = document.getElementById('file');
+        const file = fileInput.files[0];
+        if (file && file.size > 1024 * 1024) { // 1MB limit
+        alert('File size exceeds the maximum limit of 1MB.');
+        event.preventDefault();
+    }
+    });
+</script>
 </body>
 </html>

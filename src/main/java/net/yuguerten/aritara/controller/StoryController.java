@@ -7,10 +7,16 @@ import net.yuguerten.aritara.dto.StoryRequestDTO;
 import net.yuguerten.aritara.model.Story;
 import net.yuguerten.aritara.model.User;
 import net.yuguerten.aritara.service.StoryService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +31,16 @@ public class StoryController {
     @PostMapping("/story/generate")
     public String generateStory(@ModelAttribute StoryRequestDTO storyRequestDTO, Model model) {
         try {
+            MultipartFile file = storyRequestDTO.getFile();
+            if (file != null && !file.isEmpty() && file.getSize() > 1024 * 1024) {
+                throw new MaxUploadSizeExceededException(1024 * 1024);
+            }
+
+            String fileContent = null;
+            if (file != null && !file.isEmpty()) {
+                fileContent = new String(file.getBytes());
+            }
+
             String story = storyService.generateStory(
                     storyRequestDTO.getPlot(),
                     storyRequestDTO.getTitle(),
@@ -34,9 +50,15 @@ public class StoryController {
                     storyRequestDTO.getCharacterName(),
                     storyRequestDTO.getCharacterDescription(),
                     storyRequestDTO.getSettingDescription(),
-                    storyRequestDTO.getAudience());
+                    storyRequestDTO.getAudience(),
+                    fileContent
+            );
+
             model.addAttribute("story", story);
             return "storyResult";
+        } catch (MaxUploadSizeExceededException e) {
+            model.addAttribute("error", "File size exceeds the maximum limit of 1MB.");
+            return "error";
         } catch (Exception e) {
             model.addAttribute("error", "An error occurred while generating the story: " + e.getMessage());
             return "error";
@@ -98,6 +120,20 @@ public class StoryController {
         } catch (Exception e) {
             model.addAttribute("error", "An error occurred while regenerating the story: " + e.getMessage());
             return "error";
+        }
+    }
+
+    @PostMapping("/uploadFile")
+    public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file) {
+        try {
+            String fileContent = new String(file.getBytes(), StandardCharsets.UTF_8);
+            int maxLength = 3000; // Maximum number of characters
+            if (fileContent.length() > maxLength) {
+                fileContent = fileContent.substring(0, maxLength);
+            }
+            return ResponseEntity.ok(fileContent);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("File upload failed: " + e.getMessage());
         }
     }
 }
