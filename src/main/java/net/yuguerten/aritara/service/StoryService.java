@@ -147,4 +147,8 @@ public class StoryService {
     public void saveStory(Story story) {
         storyRepository.save(story);
     }
+
+    public Story getStoryById(Long id) {
+        return storyRepository.findById(id).orElse(null);
+    }
 }

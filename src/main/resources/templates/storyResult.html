@@ -99,6 +99,20 @@
             <input type="hidden" name="feedback" id="feedbackInput">
             <button type="submit" class="btn btn-regenerate" onclick="submitFeedback()">Regenerate</button>
         </form>
+<!--        <div class="share-button" onclick="toggleShareOptions()">-->
+<!--            <img src="/share_icon.png" alt="Share" title="Share">-->
+<!--        </div>-->
+        <div class="share-options" id="shareOptions">
+            <a th:href="'https://www.facebook.com/sharer/sharer.php?u=' + ${story}" target="_blank">
+                <img src="/facebook.png" alt="Share on Facebook">
+            </a>
+            <a th:href="'https://twitter.com/intent/tweet?text=Check out this story! ' + ${story}" target="_blank">
+                <img src="/twitter.png" alt="Share on Twitter">
+            </a>
+            <a th:href="'https://www.linkedin.com/shareArticle?mini=true&url=' + ${story}" target="_blank">
+                <img src="/linkedin.png" alt="Share on LinkedIn">
+            </a>
+        </div>
     </div>
 </div>
 
@@ -167,6 +181,15 @@
     function submitFeedback() {
         document.getElementById('feedbackInput').value = document.getElementById('feedback').value;
     }
+
+    // function toggleShareOptions() {
+    //     const shareOptions = document.getElementById("shareOptions");
+    //     if (shareOptions.style.display === "none" || shareOptions.style.display === "") {
+    //         shareOptions.style.display = "block";
+    //     } else {
+    //         shareOptions.style.display = "none";
+    //     }
+    // }
 </script>
 </body>
 </html>

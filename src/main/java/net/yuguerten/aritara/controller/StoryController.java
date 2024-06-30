@@ -7,6 +7,7 @@ import net.yuguerten.aritara.dto.StoryRequestDTO;
 import net.yuguerten.aritara.model.Story;
 import net.yuguerten.aritara.model.User;
 import net.yuguerten.aritara.service.StoryService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -135,5 +136,17 @@ public class StoryController {
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("File upload failed: " + e.getMessage());
         }
+    }
+
+    @Value("${app.base-url}")
+    private String baseUrl;
+
+    @GetMapping("/story/{id}")
+    public String getStoryById(@PathVariable Long id, Model model) {
+        Story story = storyService.getStoryById(id);
+        model.addAttribute("storyObj", story);
+        model.addAttribute("baseUrl", baseUrl);
+        model.addAttribute("storyId", story.getId());
+        return "storyResult";
     }
 }
