@@ -52,6 +52,9 @@
         .highlight {
             background-color: yellow;
         }
+        .voice-select {
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
@@ -83,6 +86,7 @@
         <div class="alert alert-primary" id="generatedText" role="alert"></div>
     </div>
     <div class="control-icons">
+        <select id="voiceSelect" class="form-control voice-select"></select>
         <img src="/sound_icon.png" alt="Sound" title="Sound" class="sound-icon" th:data-story="${story}">
         <form th:action="@{/story/save}" method="post">
             <input type="hidden" name="content" th:value="${story}">
@@ -99,9 +103,6 @@
             <input type="hidden" name="feedback" id="feedbackInput">
             <button type="submit" class="btn btn-regenerate" onclick="submitFeedback()">Regenerate</button>
         </form>
-<!--        <div class="share-button" onclick="toggleShareOptions()">-->
-<!--            <img src="/share_icon.png" alt="Share" title="Share">-->
-<!--        </div>-->
         <div class="share-options" id="shareOptions">
             <a th:href="'https://www.facebook.com/sharer/sharer.php?u=' + ${story}" target="_blank">
                 <img src="/facebook.png" alt="Share on Facebook">
@@ -133,6 +134,29 @@
         const words = story.split(/\s+/);
         let currentWordIndex = 0;
 
+        // Updated function to populate voice options (English only)
+        function populateVoiceList() {
+            const voices = speechSynthesis.getVoices();
+            const voiceSelect = document.getElementById('voiceSelect');
+            voiceSelect.innerHTML = '';
+            voices.forEach((voice, i) => {
+                // Check if the voice language starts with 'en' (English)
+                if (voice.lang.startsWith('en')) {
+                    const option = document.createElement('option');
+                    option.textContent = `${voice.name} (${voice.lang})`;
+                    option.setAttribute('data-lang', voice.lang);
+                    option.setAttribute('data-name', voice.name);
+                    voiceSelect.appendChild(option);
+                }
+            });
+        }
+
+        // Populate voice list on page load and when voices change
+        populateVoiceList();
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = populateVoiceList;
+        }
+
         // Function to highlight the current word
         function highlightWord(index) {
             const generatedText = document.getElementById('generatedText');
@@ -154,6 +178,17 @@
             } else {
                 // Play speech
                 utterance = new SpeechSynthesisUtterance(story);
+
+                // Set the selected voice
+                const selectedOption = document.getElementById('voiceSelect').selectedOptions[0];
+                const selectedVoice = speechSynthesis.getVoices().find(voice =>
+                    voice.name === selectedOption.getAttribute('data-name') &&
+                    voice.lang === selectedOption.getAttribute('data-lang')
+                );
+                if (selectedVoice) {
+                    utterance.voice = selectedVoice;
+                }
+
                 currentWordIndex = 0;
 
                 utterance.onboundary = function(event) {
@@ -181,15 +216,6 @@
     function submitFeedback() {
         document.getElementById('feedbackInput').value = document.getElementById('feedback').value;
     }
-
-    // function toggleShareOptions() {
-    //     const shareOptions = document.getElementById("shareOptions");
-    //     if (shareOptions.style.display === "none" || shareOptions.style.display === "") {
-    //         shareOptions.style.display = "block";
-    //     } else {
-    //         shareOptions.style.display = "none";
-    //     }
-    // }
 </script>
 </body>
 </html>

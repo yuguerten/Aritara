@@ -21,6 +21,7 @@
         .control-icons {
             display: flex;
             justify-content: flex-end;
+            align-items: center;
         }
         .control-icons img {
             margin-left: 10px;
@@ -28,6 +29,9 @@
         }
         .highlight {
             background-color: yellow;
+        }
+        .voice-select {
+            margin-right: 10px;
         }
     </style>
 </head>
@@ -63,6 +67,7 @@
     <div th:each="story : ${stories}" class="story-card">
         <p th:text="${story.content}" th:id="'story-' + ${story.id}"></p>
         <div class="control-icons">
+            <select th:id="'voiceSelect-' + ${story.id}" class="form-control voice-select"></select>
             <img src="/sound_icon.png" alt="Sound" title="Hear Story" class="sound-icon" th:data-story-id="${story.id}">
             <img src="/delete_icon.png" alt="Delete" title="Delete Story" class="delete-icon" th:data-story-id="${story.id}">
         </div>
@@ -78,6 +83,30 @@
         let currentStoryId = null;
         let words = [];
         let currentWordIndex = 0;
+
+        // Function to populate voice options (English only)
+        function populateVoiceList() {
+            const voices = speechSynthesis.getVoices();
+            $('.voice-select').each(function() {
+                const voiceSelect = this;
+                voiceSelect.innerHTML = '';
+                voices.forEach((voice) => {
+                    if (voice.lang.startsWith('en')) {
+                        const option = document.createElement('option');
+                        option.textContent = `${voice.name} (${voice.lang})`;
+                        option.setAttribute('data-lang', voice.lang);
+                        option.setAttribute('data-name', voice.name);
+                        voiceSelect.appendChild(option);
+                    }
+                });
+            });
+        }
+
+        // Populate voice list on page load and when voices change
+        populateVoiceList();
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = populateVoiceList;
+        }
 
         // Function to highlight the current word
         function highlightWord(storyId, index) {
@@ -104,6 +133,16 @@
                 currentStoryId = storyId;
 
                 utterance = new SpeechSynthesisUtterance(story);
+
+                // Set the selected voice
+                const selectedOption = document.getElementById('voiceSelect-' + storyId).selectedOptions[0];
+                const selectedVoice = speechSynthesis.getVoices().find(voice =>
+                    voice.name === selectedOption.getAttribute('data-name') &&
+                    voice.lang === selectedOption.getAttribute('data-lang')
+                );
+                if (selectedVoice) {
+                    utterance.voice = selectedVoice;
+                }
 
                 utterance.onboundary = function(event) {
                     if (event.name === 'word') {
